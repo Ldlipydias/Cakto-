@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Smartphone, History, Trash2 } from 'lucide-react';
+import { Bell, Smartphone, History, Trash2, MonitorSmartphone, AppWindow } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface NotificationHistory {
   id: string;
@@ -11,6 +12,9 @@ export default function App() {
   const [value, setValue] = useState<string>('');
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [mode, setMode] = useState<'real' | 'fake'>('fake');
+  const [showFakeOverlay, setShowFakeOverlay] = useState(false);
+  const [overlayValue, setOverlayValue] = useState('');
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -61,32 +65,41 @@ export default function App() {
     setHistory(updatedHistory);
     localStorage.setItem('notificaPixHistory', JSON.stringify(updatedHistory));
 
-    // Trigger Web Notification if allowed
-    if (permission === 'granted') {
-      if ('serviceWorker' in navigator) {
-        try {
-          const registration = await navigator.serviceWorker.ready;
-          await registration.showNotification('PIX gerado', {
-            body: `sua comissão: ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            vibrate: [200, 100, 200],
-          } as any);
-        } catch (e) {
-          console.error("SW notification failed, trying fallback", e);
+    // Trigger Notification based on mode
+    if (mode === 'real') {
+      if (permission === 'granted') {
+        if ('serviceWorker' in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification('PIX gerado', {
+              body: `sua comissão: ${value}`,
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              vibrate: [200, 100, 200],
+            } as any);
+          } catch (e) {
+            console.error("SW notification failed, trying fallback", e);
+            new Notification('PIX gerado', {
+              body: `sua comissão: ${value}`,
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+            });
+          }
+        } else {
           new Notification('PIX gerado', {
             body: `sua comissão: ${value}`,
             icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
           });
         }
       } else {
-        new Notification('PIX gerado', {
-          body: `sua comissão: ${value}`,
-          icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
-        });
+        alert("Por favor, ative as permissões de notificação no topo da tela para receber o alerta real.");
       }
     } else {
-      alert("Por favor, ative as permissões de notificação no topo da tela para receber o alerta real.");
+      // Fake Overlay Mode (for perfect screenshots)
+      setOverlayValue(value);
+      setShowFakeOverlay(true);
+      setTimeout(() => {
+        setShowFakeOverlay(false);
+      }, 4000);
     }
     
     setValue('');
@@ -129,7 +142,34 @@ export default function App() {
         )}
 
         {/* Generator Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-5">
+          
+          {/* Mode Toggle */}
+          <div className="flex bg-gray-100 p-1 rounded-xl">
+            <button
+              onClick={() => setMode('fake')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${
+                mode === 'fake' 
+                  ? 'bg-white text-emerald-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <AppWindow className="w-4 h-4" />
+              Modo Print (Sem Link)
+            </button>
+            <button
+              onClick={() => setMode('real')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg transition-all ${
+                mode === 'real' 
+                  ? 'bg-white text-emerald-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <MonitorSmartphone className="w-4 h-4" />
+              Notificação Real
+            </button>
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Valor da Comissão</label>
             <div className="relative">
@@ -154,7 +194,9 @@ export default function App() {
           </button>
           
           <p className="text-xs text-center text-gray-400">
-            Dica: Adicione este app à tela inicial para ocultar a barra do navegador.
+            {mode === 'fake' 
+              ? "A notificação aparecerá na tela do app, perfeita para prints sem mostrar links."
+              : "A notificação aparecerá no sistema do celular (pode mostrar o link do site por segurança do Android)."}
           </p>
         </div>
 
@@ -199,6 +241,35 @@ export default function App() {
           )}
         </div>
       </main>
+
+      {/* Realistic In-App Notification Overlay (Android 12+ Style) */}
+      <AnimatePresence>
+        {showFakeOverlay && (
+          <motion.div
+            initial={{ y: -150, opacity: 0 }}
+            animate={{ y: 16, opacity: 1 }}
+            exit={{ y: -150, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            className="fixed top-0 left-0 right-0 z-50 px-4 pointer-events-none flex justify-center"
+          >
+            {/* Android style notification bubble (Dark mode) */}
+            <div className="bg-[#2d302d] text-white shadow-2xl rounded-[28px] p-4 flex items-center gap-4 w-full max-w-[400px]">
+              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-emerald-600 flex items-center justify-center">
+                <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="App Icon" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-[16px] leading-tight">PIX gerado</h4>
+                  <span className="text-[12px] text-gray-400">agora</span>
+                </div>
+                <p className="text-[14px] text-gray-300 mt-1 leading-tight">
+                  sua comissão: {overlayValue}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
