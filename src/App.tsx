@@ -12,7 +12,7 @@ interface NotificationHistory {
 
 export default function App() {
   const [value, setValue] = useState<string>('');
-  const [title, setTitle] = useState('PIX gerado');
+  const [title, setTitle] = useState('Pix gerado!!!');
   const [message, setMessage] = useState('sua comissão:');
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
@@ -89,7 +89,7 @@ export default function App() {
     // Trigger Notification based on mode
     if (mode === 'real') {
       // O truque dos 14 espaços para empurrar o domínio e esconder o ".netlify.app"
-      const finalTitle = (title || 'PIX gerado') + '\u00A0'.repeat(14);
+      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(14);
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
@@ -119,7 +119,7 @@ export default function App() {
       }
     } else {
       // Fake Overlay Mode (for perfect screenshots)
-      setOverlayTitle(title || 'PIX gerado');
+      setOverlayTitle(title || 'Pix gerado!!!');
       setOverlayMessage(message || 'sua comissão:');
       setOverlayValue(value);
       setShowFakeOverlay(true);
@@ -144,7 +144,7 @@ export default function App() {
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="font-bold text-lg">NotificaPIX</h1>
+          <h1 className="font-bold text-lg">Cakto</h1>
         </div>
       </header>
 
@@ -276,7 +276,7 @@ export default function App() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">
-                        {item.title || 'PIX gerado'}
+                        {item.title || 'Pix gerado!!!'}
                       </p>
                       <p className="text-xs text-gray-500">
                         {item.message || 'sua comissão:'} {item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} • {new Date(item.createdAt).toLocaleString('pt-BR')}
@@ -301,23 +301,35 @@ export default function App() {
             className="fixed top-0 left-0 right-0 z-50 px-2 pointer-events-none flex justify-center"
           >
             {/* Android style notification bubble (Dark mode) */}
-            <div className="bg-[#2f302f] text-white shadow-2xl rounded-[28px] p-3.5 flex items-start gap-3 w-full max-w-[400px]">
-              <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 bg-[#0f8b5a] flex items-center justify-center mt-0.5">
-                <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="App Icon" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex-1 pt-0.5">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">{overlayTitle}</h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[12px] text-gray-400">
-                      {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
+            <div className="bg-[#2f302f] text-white shadow-2xl rounded-[28px] p-4 flex flex-col gap-1 w-full max-w-[400px]">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full overflow-hidden bg-[#0f8b5a] flex items-center justify-center">
+                    <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="App Icon" className="w-full h-full object-cover" />
                   </div>
+                  <span className="text-[12px] text-gray-300">Cakto</span>
                 </div>
-                <p className="text-[14px] text-gray-300 mt-0.5 leading-tight">
-                  {overlayMessage} {overlayValue}
-                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[12px] text-gray-400">
+                    {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+              
+              {/* Content */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 pt-1">
+                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">{overlayTitle}</h4>
+                  <p className="text-[14px] text-gray-300 mt-0.5 leading-tight">
+                    {overlayMessage} {overlayValue}
+                  </p>
+                </div>
+                {/* Right side image */}
+                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-[#0f8b5a] flex items-center justify-center">
+                  <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="Right Icon" className="w-full h-full object-cover" />
+                </div>
               </div>
             </div>
           </motion.div>
