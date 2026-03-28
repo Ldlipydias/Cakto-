@@ -5,34 +5,50 @@
   "start_url": "/",
   "id": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#10b981",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "scope": "/",
+  "categories": ["finance", "business", "productivity"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Nova Venda",
+      "short_name": "Venda",
+      "description": "Registrar uma nova venda",
+      "url": "/",
+      "icons": [{ "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
-      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
+      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
+      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
+      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
-      "sizes": "1920x1080",
-      "type": "image/jpeg",
+      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "form_factor": "wide"
     }
   ]
