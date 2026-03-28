@@ -98,7 +98,7 @@ export default function App() {
             await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
-              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png',
+              badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
@@ -142,7 +142,7 @@ export default function App() {
       <header className="bg-white shadow-sm px-4 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full overflow-hidden">
-            <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="Logo" className="w-full h-full object-cover" />
+            <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="font-bold text-lg">Cakto</h1>
         </div>
@@ -306,7 +306,7 @@ export default function App() {
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full overflow-hidden bg-[#0f8b5a] flex items-center justify-center">
-                    <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="App Icon" className="w-full h-full object-cover" />
+                    <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="App Icon" className="w-full h-full object-cover" />
                   </div>
                   <span className="text-[12px] text-gray-300">Cakto</span>
                 </div>
