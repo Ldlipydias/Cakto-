@@ -85,8 +85,8 @@ export default function App() {
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
       // O truque dos espaços para empurrar o domínio e esconder o ".netlify.app"
-      // Aumentado para 40 espaços para garantir que o domínio suma em telas maiores
-      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(40);
+      // Usando 60 espaços e um caractere invisível no final para evitar que o Android corte os espaços
+      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(60) + '\u200B';
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
