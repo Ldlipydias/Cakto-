@@ -1,6 +1,7 @@
 {
   "name": "Cakto",
   "short_name": "Cakto",
+  "description": "Aplicativo para gerenciar notificações e vendas.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
