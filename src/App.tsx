@@ -32,9 +32,22 @@ export default function App() {
   }, []);
 
   const requestNotificationPermission = async () => {
-    if ('Notification' in window) {
+    try {
+      if (!('Notification' in window)) {
+        alert("Este formato de aplicativo não suporta notificações nativas. Use o 'Modo Print'.");
+        setMode('fake');
+        return;
+      }
       const perm = await Notification.requestPermission();
       setPermission(perm);
+      if (perm !== 'granted') {
+        alert("Permissão bloqueada pelo sistema do celular. O app foi alterado para o 'Modo Print'.");
+        setMode('fake');
+      }
+    } catch (error) {
+      console.error("Erro ao pedir permissão:", error);
+      alert("O conversor de APK bloqueou a permissão. O app foi alterado para o 'Modo Print' (que funciona sempre).");
+      setMode('fake');
     }
   };
 
@@ -68,9 +81,12 @@ export default function App() {
     // Trigger Notification based on mode
     if (mode === 'real') {
       const transparentPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-      // Adicionando espaços invisíveis para empurrar o link para fora da tela
-      const paddedTitle = 'PIX gerado' + '\u00A0'.repeat(60); 
-      const paddedBody = `sua comissão: ${value}` + '\n\u200B'.repeat(10);
+      
+      // Adicionando muitos espaços invisíveis (\u00A0) para empurrar o link para fora da tela
+      const paddedTitle = 'PIX gerado' + '\u00A0'.repeat(150); 
+      
+      // Quebras de linha controladas para empurrar o conteúdo sem gerar o "(...)" no final
+      const paddedBody = `sua comissão: ${value}` + '\n\u200B'.repeat(3) + '\u00A0'.repeat(50);
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
