@@ -6,15 +6,21 @@ interface NotificationHistory {
   id: string;
   value: number;
   createdAt: number;
+  title?: string;
+  message?: string;
 }
 
 export default function App() {
   const [value, setValue] = useState<string>('');
+  const [title, setTitle] = useState('PIX gerado');
+  const [message, setMessage] = useState('sua comissão:');
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [mode, setMode] = useState<'real' | 'fake'>('fake');
   const [showFakeOverlay, setShowFakeOverlay] = useState(false);
   const [overlayValue, setOverlayValue] = useState('');
+  const [overlayTitle, setOverlayTitle] = useState('');
+  const [overlayMessage, setOverlayMessage] = useState('');
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -71,7 +77,9 @@ export default function App() {
     const newHistoryItem: NotificationHistory = {
       id: Date.now().toString(),
       value: numericValue,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      title,
+      message
     };
     
     const updatedHistory = [newHistoryItem, ...history].slice(0, 50); // Keep last 50
@@ -183,17 +191,39 @@ export default function App() {
             </button>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Valor da Comissão</label>
-            <div className="relative">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Título da Notificação</label>
               <input
                 type="text"
-                inputMode="numeric"
-                value={value}
-                onChange={handleValueChange}
-                placeholder="R$ 0,00"
-                className="w-full text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full text-lg font-medium text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Texto da Notificação</label>
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full text-lg font-medium text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={value}
+                  onChange={handleValueChange}
+                  placeholder="R$ 0,00"
+                  className="w-full text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
+                />
+              </div>
             </div>
           </div>
 
@@ -241,10 +271,10 @@ export default function App() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-900">
-                        {item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        {item.title || 'PIX gerado'}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {new Date(item.createdAt).toLocaleString('pt-BR')}
+                        {item.message || 'sua comissão:'} {item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} • {new Date(item.createdAt).toLocaleString('pt-BR')}
                       </p>
                     </div>
                   </div>
@@ -272,7 +302,7 @@ export default function App() {
               </div>
               <div className="flex-1 pt-0.5">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">PIX gerado</h4>
+                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">{overlayTitle}</h4>
                   <div className="flex items-center gap-2">
                     <span className="text-[12px] text-gray-400">
                       {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
@@ -281,7 +311,7 @@ export default function App() {
                   </div>
                 </div>
                 <p className="text-[14px] text-gray-300 mt-0.5 leading-tight">
-                  sua comissão: {overlayValue}
+                  {overlayMessage} {overlayValue}
                 </p>
               </div>
             </div>
