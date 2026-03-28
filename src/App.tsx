@@ -1,73 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, googleProvider } from './firebase';
-import { signInWithPopup, onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { Bell, LogOut, Smartphone, History } from 'lucide-react';
+import { Bell, Smartphone, History, Trash2 } from 'lucide-react';
 
 interface NotificationHistory {
   id: string;
-  userId: string;
   value: number;
-  createdAt: Timestamp;
+  createdAt: number;
 }
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAuthReady, setIsAuthReady] = useState(false);
   const [value, setValue] = useState<string>('');
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setIsAuthReady(true);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
     if ('Notification' in window) {
       setPermission(Notification.permission);
     }
+    // Load history from local storage
+    const savedHistory = localStorage.getItem('notificaPixHistory');
+    if (savedHistory) {
+      try {
+        setHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error('Failed to parse history', e);
+      }
+    }
   }, []);
-
-  useEffect(() => {
-    if (!isAuthReady || !user) return;
-
-    const q = query(
-      collection(db, `users/${user.uid}/notifications`),
-      orderBy('createdAt', 'desc')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const notifs: NotificationHistory[] = [];
-      snapshot.forEach((doc) => {
-        notifs.push({ id: doc.id, ...doc.data() } as NotificationHistory);
-      });
-      setHistory(notifs);
-    }, (error) => {
-      console.error("Error fetching history:", error);
-    });
-
-    return () => unsubscribe();
-  }, [user, isAuthReady]);
-
-  const handleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
 
   const requestNotificationPermission = async () => {
     if ('Notification' in window) {
@@ -92,18 +50,16 @@ export default function App() {
 
     const numericValue = parseFloat(value.replace(/[R$\s.]/g, '').replace(',', '.'));
     
-    // Save to history
-    if (user) {
-      try {
-        await addDoc(collection(db, `users/${user.uid}/notifications`), {
-          userId: user.uid,
-          value: numericValue,
-          createdAt: serverTimestamp()
-        });
-      } catch (error) {
-        console.error("Error saving notification:", error);
-      }
-    }
+    // Save to local history
+    const newHistoryItem: NotificationHistory = {
+      id: Date.now().toString(),
+      value: numericValue,
+      createdAt: Date.now()
+    };
+    
+    const updatedHistory = [newHistoryItem, ...history].slice(0, 50); // Keep last 50
+    setHistory(updatedHistory);
+    localStorage.setItem('notificaPixHistory', JSON.stringify(updatedHistory));
 
     // Trigger Web Notification if allowed
     if (permission === 'granted') {
@@ -136,30 +92,10 @@ export default function App() {
     setValue('');
   };
 
-  if (!isAuthReady) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div></div>;
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center space-y-6">
-          <div className="w-24 h-24 mx-auto bg-emerald-100 rounded-full flex items-center justify-center">
-            <Smartphone className="w-12 h-12 text-emerald-600" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">NotificaPIX</h1>
-          <p className="text-gray-500">Crie notificações realistas para suas comissões.</p>
-          <button
-            onClick={handleLogin}
-            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-          >
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-6 h-6" alt="Google" />
-            Entrar com Google
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const clearHistory = () => {
+    setHistory([]);
+    localStorage.removeItem('notificaPixHistory');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
@@ -171,9 +107,6 @@ export default function App() {
           </div>
           <h1 className="font-bold text-lg">NotificaPIX</h1>
         </div>
-        <button onClick={handleLogout} className="p-2 text-gray-500 hover:bg-gray-100 rounded-full">
-          <LogOut className="w-5 h-5" />
-        </button>
       </header>
 
       <main className="max-w-md mx-auto p-4 space-y-6 mt-4">
@@ -227,9 +160,16 @@ export default function App() {
 
         {/* History */}
         <div className="space-y-3">
-          <div className="flex items-center gap-2 text-gray-700 px-1">
-            <History className="w-5 h-5" />
-            <h2 className="font-semibold">Histórico Recente</h2>
+          <div className="flex items-center justify-between px-1">
+            <div className="flex items-center gap-2 text-gray-700">
+              <History className="w-5 h-5" />
+              <h2 className="font-semibold">Histórico Recente</h2>
+            </div>
+            {history.length > 0 && (
+              <button onClick={clearHistory} className="text-xs text-red-500 hover:text-red-600 flex items-center gap-1">
+                <Trash2 className="w-3 h-3" /> Limpar
+              </button>
+            )}
           </div>
           
           {history.length === 0 ? (
@@ -249,7 +189,7 @@ export default function App() {
                         {item.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {item.createdAt?.toDate().toLocaleString('pt-BR')}
+                        {new Date(item.createdAt).toLocaleString('pt-BR')}
                       </p>
                     </div>
                   </div>
