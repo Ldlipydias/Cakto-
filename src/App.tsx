@@ -92,22 +92,22 @@ export default function App() {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification('PIX gerado', {
-              body: `sua comissão: ${value}`,
+            await registration.showNotification(title || 'PIX gerado', {
+              body: `${message || 'sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
-            new Notification('PIX gerado', {
-              body: `sua comissão: ${value}`,
+            new Notification(title || 'PIX gerado', {
+              body: `${message || 'sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
             });
           }
         } else {
-          new Notification('PIX gerado', {
-            body: `sua comissão: ${value}`,
+          new Notification(title || 'PIX gerado', {
+            body: `${message || 'sua comissão:'} ${value}`,
             icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
           });
         }
@@ -116,6 +116,8 @@ export default function App() {
       }
     } else {
       // Fake Overlay Mode (for perfect screenshots)
+      setOverlayTitle(title || 'PIX gerado');
+      setOverlayMessage(message || 'sua comissão:');
       setOverlayValue(value);
       setShowFakeOverlay(true);
       setTimeout(() => {
