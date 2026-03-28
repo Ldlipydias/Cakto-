@@ -67,27 +67,34 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real') {
+      const transparentPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+      // Adicionando espaços invisíveis para empurrar o link para fora da tela
+      const paddedTitle = 'PIX gerado' + '\u00A0'.repeat(60); 
+      const paddedBody = `sua comissão: ${value}` + '\n\u200B'.repeat(10);
+
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification('PIX gerado', {
-              body: `sua comissão: ${value}`,
+            await registration.showNotification(paddedTitle, {
+              body: paddedBody,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              badge: transparentPng, // Ícone transparente na direita
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
-            new Notification('PIX gerado', {
-              body: `sua comissão: ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+            new Notification(paddedTitle, {
+              body: paddedBody,
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              badge: transparentPng
             });
           }
         } else {
-          new Notification('PIX gerado', {
-            body: `sua comissão: ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+          new Notification(paddedTitle, {
+            body: paddedBody,
+            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+            badge: transparentPng
           });
         }
       } else {
