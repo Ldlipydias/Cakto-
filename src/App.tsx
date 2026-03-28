@@ -88,11 +88,14 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real') {
+      // O truque dos 14 espaços para empurrar o domínio e esconder o ".netlify.app"
+      const finalTitle = (title || 'PIX gerado') + '\u00A0'.repeat(14);
+
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification(title || 'PIX gerado', {
+            await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
@@ -100,13 +103,13 @@ export default function App() {
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
-            new Notification(title || 'PIX gerado', {
+            new Notification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
             });
           }
         } else {
-          new Notification(title || 'PIX gerado', {
+          new Notification(finalTitle, {
             body: `${message || 'sua comissão:'} ${value}`,
             icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
           });
