@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Smartphone, History, Trash2, MonitorSmartphone, AppWindow } from 'lucide-react';
+import { Bell, Smartphone, History, Trash2, MonitorSmartphone, AppWindow, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface NotificationHistory {
@@ -80,37 +80,27 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real') {
-      const transparentPng = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
-      
-      // Adicionando muitos espaços invisíveis (\u00A0) para empurrar o link para fora da tela
-      const paddedTitle = 'PIX gerado' + '\u00A0'.repeat(150); 
-      
-      // Quebras de linha controladas para empurrar o conteúdo sem gerar o "(...)" no final
-      const paddedBody = `sua comissão: ${value}` + '\n\u200B'.repeat(3) + '\u00A0'.repeat(50);
-
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification(paddedTitle, {
-              body: paddedBody,
+            await registration.showNotification('PIX gerado', {
+              body: `sua comissão: ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: transparentPng, // Ícone transparente na direita
+              badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
-            new Notification(paddedTitle, {
-              body: paddedBody,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: transparentPng
+            new Notification('PIX gerado', {
+              body: `sua comissão: ${value}`,
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
             });
           }
         } else {
-          new Notification(paddedTitle, {
-            body: paddedBody,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            badge: transparentPng
+          new Notification('PIX gerado', {
+            body: `sua comissão: ${value}`,
+            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
           });
         }
       } else {
@@ -273,19 +263,24 @@ export default function App() {
             animate={{ y: 16, opacity: 1 }}
             exit={{ y: -150, opacity: 0 }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed top-0 left-0 right-0 z-50 px-4 pointer-events-none flex justify-center"
+            className="fixed top-0 left-0 right-0 z-50 px-2 pointer-events-none flex justify-center"
           >
             {/* Android style notification bubble (Dark mode) */}
-            <div className="bg-[#2d302d] text-white shadow-2xl rounded-[28px] p-4 flex items-center gap-4 w-full max-w-[400px]">
-              <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-emerald-600 flex items-center justify-center">
+            <div className="bg-[#2f302f] text-white shadow-2xl rounded-[28px] p-3.5 flex items-start gap-3 w-full max-w-[400px]">
+              <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 bg-[#0f8b5a] flex items-center justify-center mt-0.5">
                 <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="App Icon" className="w-full h-full object-cover" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 pt-0.5">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-[16px] leading-tight">PIX gerado</h4>
-                  <span className="text-[12px] text-gray-400">agora</span>
+                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">PIX gerado</h4>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[12px] text-gray-400">
+                      {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </div>
                 </div>
-                <p className="text-[14px] text-gray-300 mt-1 leading-tight">
+                <p className="text-[14px] text-gray-300 mt-0.5 leading-tight">
                   sua comissão: {overlayValue}
                 </p>
               </div>
