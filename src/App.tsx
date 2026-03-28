@@ -97,21 +97,21 @@ export default function App() {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
+              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
             });
           }
         } else {
           new Notification(finalTitle, {
             body: `${message || 'sua comissão:'} ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+            icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
           });
         }
       } else {
@@ -142,7 +142,7 @@ export default function App() {
       <header className="bg-white shadow-sm px-4 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full overflow-hidden">
-            <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="Logo" className="w-full h-full object-cover" />
+            <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="font-bold text-lg">NotificaPIX</h1>
         </div>
@@ -303,7 +303,7 @@ export default function App() {
             {/* Android style notification bubble (Dark mode) */}
             <div className="bg-[#2f302f] text-white shadow-2xl rounded-[28px] p-3.5 flex items-start gap-3 w-full max-w-[400px]">
               <div className="w-11 h-11 rounded-full overflow-hidden shrink-0 bg-[#0f8b5a] flex items-center justify-center mt-0.5">
-                <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="App Icon" className="w-full h-full object-cover" />
+                <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="App Icon" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 pt-0.5">
                 <div className="flex items-center justify-between">
