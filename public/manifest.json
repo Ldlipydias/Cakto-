@@ -26,29 +26,29 @@
   ],
   "icons": [
     {
-      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow"
     },
     {
-      "src": "https://i.ibb.co/dhzgGMY/154879-1.png",
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "wide"
     }
   ]

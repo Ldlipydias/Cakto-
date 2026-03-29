@@ -94,7 +94,7 @@ export default function App() {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
               badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
               vibrate: [200, 100, 200],
             } as any);
@@ -102,13 +102,13 @@ export default function App() {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
             });
           }
         } else {
           new Notification(finalTitle, {
             body: `${message || 'sua comissão:'} ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg'
+            icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
           });
         }
       } else {
