@@ -94,21 +94,24 @@ export default function App() {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
-            });
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png'
+            } as any);
           }
         } else {
           new Notification(finalTitle, {
             body: `${message || 'sua comissão:'} ${value}`,
-            icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
-          });
+            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+            badge: 'https://i.ibb.co/dhzgGMY/154879-1.png'
+          } as any);
         }
       } else {
         alert("Por favor, ative as permissões de notificação no topo da tela para receber o alerta real.");
