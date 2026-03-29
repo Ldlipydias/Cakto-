@@ -12,7 +12,6 @@ self.addEventListener('push', (event) => {
   const options = {
     body: data.body || 'sua comissão: R$ 0,00',
     icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
-    badge: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
     vibrate: [200, 100, 200],
     data: {
       dateOfArrival: Date.now(),
