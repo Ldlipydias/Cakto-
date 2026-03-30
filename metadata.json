@@ -1,5 +1,5 @@
 {
-  "name": "",
-  "description": "",
+  "name": "Android Studio Mobile Start",
+  "description": "Uma tela de início inspirada no Android Studio para dispositivos móveis.",
   "requestFramePermissions": []
 }

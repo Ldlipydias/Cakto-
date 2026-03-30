@@ -84,7 +84,9 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
-      const finalTitle = title || 'Pix gerado!!!';
+      // Adiciona 14 espaços (usando non-breaking space para não ser cortado pelo Android)
+      // Isso ajuda a empurrar o domínio (ex: netlify.app) para fora da tela
+      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(14);
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
