@@ -84,9 +84,7 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
-      // O truque dos espaços para empurrar o domínio e esconder o ".netlify.app"
-      // Usando 60 espaços e um caractere Braille vazio no final para o Android não cortar
-      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(60) + '\u2800';
+      const finalTitle = title || 'Pix gerado!!!';
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
@@ -94,23 +92,20 @@ export default function App() {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png',
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
               vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
               body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              badge: 'https://i.ibb.co/dhzgGMY/154879-1.png'
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
             } as any);
           }
         } else {
           new Notification(finalTitle, {
             body: `${message || 'sua comissão:'} ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            badge: 'https://i.ibb.co/dhzgGMY/154879-1.png'
+            icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
           } as any);
         }
       } else {
