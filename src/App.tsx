@@ -84,30 +84,30 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
-      const finalTitle = title || 'Pix gerado!';
+      // Adiciona 14 espaços (usando non-breaking space para não ser cortado pelo Android)
+      // Isso ajuda a empurrar o domínio (ex: netlify.app) para fora da tela
+      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(14);
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
-              body: `${message || 'Sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              tag: 'pix'
+              body: `${message || 'sua comissão:'} ${value}`,
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
+              vibrate: [200, 100, 200],
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
-              body: `${message || 'Sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              tag: 'pix'
+              body: `${message || 'sua comissão:'} ${value}`,
+              icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
             } as any);
           }
         } else {
           new Notification(finalTitle, {
-            body: `${message || 'Sua comissão:'} ${value}`,
-            icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            tag: 'pix'
+            body: `${message || 'sua comissão:'} ${value}`,
+            icon: 'https://i.ibb.co/dhzgGMY/154879-1.png'
           } as any);
         }
       } else {
