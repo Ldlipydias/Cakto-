@@ -2,9 +2,17 @@
   "id": "/",
   "name": "Cakto",
   "short_name": "Cakto",
+  "description": "Aplicativo para gerenciar notificações e vendas.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
     {
       "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
@@ -17,6 +25,29 @@
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nova Venda",
+      "short_name": "Venda",
+      "description": "Registrar uma nova venda",
+      "url": "/",
+      "icons": [{ "src": "https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg", "sizes": "192x192" }]
     }
   ]
 }
