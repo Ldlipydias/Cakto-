@@ -10,19 +10,13 @@ self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
   
   const options = {
-    body: data.body || 'sua comissão: R$ 0,00',
+    body: data.body || 'Sua comissão: R$ 5,22',
     icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-    tag: 'pix',
-    renotify: false,
-    vibrate: [200, 100, 200],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: '2'
-    }
+    tag: 'pix'
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'PIX gerado', options)
+    self.registration.showNotification(data.title || 'Pix gerado!', options)
   );
 });
 

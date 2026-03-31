@@ -84,35 +84,30 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
-      // Mantemos os 14 espaços como truque extra para empurrar o domínio
-      const finalTitle = (title || 'Pix gerado!!!') + '\u00A0'.repeat(14);
+      const finalTitle = title || 'Pix gerado!';
 
       if (permission === 'granted') {
         if ('serviceWorker' in navigator) {
           try {
             const registration = await navigator.serviceWorker.ready;
             await registration.showNotification(finalTitle, {
-              body: `${message || 'sua comissão:'} ${value}`,
-              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg', // Usando o ícone principal do app (Cakto)
-              tag: 'pix',
-              renotify: false,
-              vibrate: [200, 100, 200],
+              body: `${message || 'Sua comissão:'} ${value}`,
+              icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
+              tag: 'pix'
             } as any);
           } catch (e) {
             console.error("SW notification failed, trying fallback", e);
             new Notification(finalTitle, {
-              body: `${message || 'sua comissão:'} ${value}`,
+              body: `${message || 'Sua comissão:'} ${value}`,
               icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-              tag: 'pix',
-              renotify: false
+              tag: 'pix'
             } as any);
           }
         } else {
           new Notification(finalTitle, {
-            body: `${message || 'sua comissão:'} ${value}`,
+            body: `${message || 'Sua comissão:'} ${value}`,
             icon: 'https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg',
-            tag: 'pix',
-            renotify: false
+            tag: 'pix'
           } as any);
         }
       } else {
