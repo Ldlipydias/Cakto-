@@ -8,9 +8,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
+  const spacer = '\u00A0'.repeat(14);
   
   const options = {
-    body: data.body || 'sua comissão: R$ 0,00',
+    body: data.body || 'Pix gerado!\nSua comissão: R$ 0,00',
     icon: 'https://i.ibb.co/dhzgGMY/154879-1.png',
     vibrate: [200, 100, 200],
     data: {
@@ -20,7 +21,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'PIX gerado', options)
+    self.registration.showNotification(data.title || `\u00A0\n\u00A0\n\u00A0\nCakto${spacer}`, options)
   );
 });
 
