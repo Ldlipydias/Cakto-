@@ -85,8 +85,8 @@ export default function App() {
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
       const spacer = '\u00A0'.repeat(14);
-      // 3 linhas transparentes em cima + Título Cakto + Espaçador para esconder URL
-      const finalTitle = `\u00A0\n\u00A0\n\u00A0\nCakto${spacer}`;
+      // O link do site aparece na primeira linha, então colocamos o spacer lá para empurrá-lo
+      const finalTitle = `\u00A0${spacer}\n\u00A0\n\u00A0\nCakto`;
       // Corpo com Pix gerado e Sua comissão
       const finalBody = `Pix gerado!\nSua comissão: ${value}`;
 

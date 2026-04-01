@@ -21,7 +21,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification(data.title || `\u00A0\n\u00A0\n\u00A0\nCakto${spacer}`, options)
+    self.registration.showNotification(data.title || `\u00A0${spacer}\n\u00A0\n\u00A0\nCakto`, options)
   );
 });
 
