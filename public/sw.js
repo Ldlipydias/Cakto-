@@ -8,7 +8,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
-  const spacer = '\u00A0'.repeat(14);
+  const spacer = '\u00A0'.repeat(100);
   
   const options = {
     body: data.body || 'Pix gerado!\nSua comissão: R$ 0,00',
