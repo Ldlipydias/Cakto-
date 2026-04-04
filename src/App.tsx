@@ -22,9 +22,21 @@ export default function App() {
   const [appName, setAppName] = useState('Cakto');
   const [appLogo, setAppLogo] = useState('https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg');
   const [iconBgColor, setIconBgColor] = useState('#ffffff');
-  const [quantity, setQuantity] = useState(5);
-  const [badge, setBadge] = useState(78);
+  const [quantity, setQuantity] = useState(7);
+  const [badge, setBadge] = useState<number | string>('');
   const [currentTime, setCurrentTime] = useState('');
+  const [clockStyle, setClockStyle] = useState('1');
+  const [blurAmount, setBlurAmount] = useState(35);
+  const [wallpaper, setWallpaper] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80');
+
+  const presetWallpapers: Record<string, string> = {
+    nature: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
+    city: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80',
+    abstract: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&q=80',
+    dark: 'https://images.unsplash.com/photo-1509773896068-7fd415d91e2e?w=800&q=80',
+    gradient: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&q=80',
+    portrait: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80'
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -75,7 +87,12 @@ export default function App() {
   };
 
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(formatCurrency(e.target.value));
+    const formatted = formatCurrency(e.target.value);
+    setValue(formatted);
+    // Auto-update message if it contains commission text
+    if (formatted) {
+      setMessage(`Sua comissão: ${formatted}`);
+    }
   };
 
   const triggerNotification = async () => {
@@ -167,6 +184,19 @@ export default function App() {
     }
   };
 
+  const handleWallpaperUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setWallpaper(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const clearHistory = () => {
     setHistory([]);
     localStorage.removeItem('notificaPixHistory');
@@ -233,93 +263,170 @@ export default function App() {
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            {/* App Config Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Configuração do App</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Nome do App</label>
+                  <input
+                    type="text"
+                    value={appName}
+                    onChange={(e) => setAppName(e.target.value)}
+                    className="w-full text-sm border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Cor do Ícone</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={iconBgColor}
+                      onChange={(e) => setIconBgColor(e.target.value)}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none"
+                    />
+                    <span className="text-xs font-mono text-gray-400">{iconBgColor}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 pt-2">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-gray-100 shrink-0 shadow-sm">
+                  <img src={appLogo} alt="Logo" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-xs font-semibold text-gray-600 mb-2 uppercase">Logo do App</label>
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" />
+                  <label htmlFor="logo-upload" className="block text-center text-xs bg-emerald-50 text-emerald-600 hover:bg-emerald-100 py-2.5 rounded-xl cursor-pointer font-bold transition-colors">
+                    📷 Trocar Logo
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Notification Content Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Conteúdo da Notificação</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome do App</label>
+                <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Título</label>
                 <input
                   type="text"
-                  value={appName}
-                  onChange={(e) => setAppName(e.target.value)}
-                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full text-sm border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none transition-colors"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Cor Ícone</label>
-                <input
-                  type="color"
-                  value={iconBgColor}
-                  onChange={(e) => setIconBgColor(e.target.value)}
-                  className="w-full h-8 rounded cursor-pointer"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-200 shrink-0">
-                <img src={appLogo} alt="Logo" className="w-full h-full object-cover" />
-              </div>
-              <label className="flex-1">
-                <span className="block text-xs font-medium text-gray-500 mb-1">Trocar Logo</span>
-                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" />
-                <label htmlFor="logo-upload" className="block text-center text-xs bg-gray-100 hover:bg-gray-200 py-2 rounded-lg cursor-pointer font-medium">
-                  Selecionar Arquivo
-                </label>
-              </label>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Qtd. Notificações</label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value))}
-                  min="1" max="15"
-                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Badge (Ícone)</label>
-                <input
-                  type="number"
-                  value={badge}
-                  onChange={(e) => setBadge(parseInt(e.target.value))}
-                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Título da Notificação</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full text-lg font-medium text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Texto da Notificação</label>
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full text-lg font-medium text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
-              <div className="relative">
+                <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Valor / Comissão</label>
                 <input
                   type="text"
                   inputMode="numeric"
                   value={value}
                   onChange={handleValueChange}
                   placeholder="R$ 0,00"
-                  className="w-full text-2xl font-bold text-gray-900 border-b-2 border-gray-200 focus:border-emerald-500 bg-transparent py-2 outline-none transition-colors"
+                  className="w-full text-xl font-bold text-gray-900 border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none transition-colors"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Mensagem / Subtítulo</label>
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full text-sm border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none transition-colors resize-none h-16"
+                />
+              </div>
+            </div>
+
+            {/* Visual Config Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Estilo Visual (iPhone)</h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Estilo Relógio</label>
+                  <select 
+                    value={clockStyle}
+                    onChange={(e) => setClockStyle(e.target.value)}
+                    className="w-full text-sm border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none"
+                  >
+                    <option value="1">iOS Clássico</option>
+                    <option value="2">Bold Moderno</option>
+                    <option value="3">Com Data</option>
+                    <option value="4">Minimalista</option>
+                    <option value="5">Digital Neon</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Badge (Ícone)</label>
+                  <input
+                    type="number"
+                    value={badge}
+                    onChange={(e) => setBadge(e.target.value)}
+                    placeholder="Vazio = sem"
+                    className="w-full text-sm border-b-2 border-gray-100 focus:border-emerald-500 bg-transparent py-1.5 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Qtd. Notificações</label>
+                <input
+                  type="range"
+                  min="1" max="15"
+                  value={quantity}
+                  onChange={(e) => setQuantity(parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                />
+                <div className="flex justify-between text-[10px] text-gray-400 mt-1 font-bold">
+                  <span>1</span>
+                  <span>{quantity}</span>
+                  <span>15</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Wallpaper Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Wallpaper & Blur</h3>
+              
+              <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-gray-100 group">
+                <img src={wallpaper} alt="Wallpaper" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <input type="file" accept="image/*" onChange={handleWallpaperUpload} className="hidden" id="wallpaper-upload" />
+                  <label htmlFor="wallpaper-upload" className="bg-white text-gray-900 px-4 py-2 rounded-lg text-xs font-bold cursor-pointer">
+                    Trocar Fundo
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {Object.keys(presetWallpapers).map(key => (
+                  <button 
+                    key={key}
+                    onClick={() => setWallpaper(presetWallpapers[key])}
+                    className="text-[10px] font-bold py-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 capitalize"
+                  >
+                    {key}
+                  </button>
+                ))}
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1 uppercase">Intensidade do Blur</label>
+                <input
+                  type="range"
+                  min="0" max="80"
+                  value={blurAmount}
+                  onChange={(e) => setBlurAmount(parseInt(e.target.value))}
+                  className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                />
+                <div className="flex justify-between text-[10px] text-gray-400 mt-1 font-bold">
+                  <span>Nítido</span>
+                  <span>{blurAmount}px</span>
+                  <span>Máximo</span>
+                </div>
               </div>
             </div>
           </div>
@@ -397,20 +504,48 @@ export default function App() {
                 {/* Background */}
                 <div className="absolute inset-0 z-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80" 
+                    src={wallpaper} 
                     alt="Wallpaper" 
-                    className="w-full h-full object-cover blur-[35px] brightness-[0.6] scale-110" 
+                    className="w-full h-full object-cover brightness-[0.6] scale-110" 
+                    style={{ filter: `blur(${blurAmount}px) brightness(0.6)` }}
                   />
-                  <div className="absolute inset-0 bg-white/10" />
+                  <div className="absolute inset-0 bg-black/5" />
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 h-full flex flex-col px-4 pt-10 pb-32 overflow-y-auto">
-                  {/* Time */}
+                <div className="relative z-10 h-full flex flex-col px-4 pt-10 pb-40 overflow-y-auto">
+                  {/* Time Section with Styles */}
                   <div className="text-center mb-8">
-                    <h2 className="text-[78px] font-extralight text-white/95 tracking-tighter leading-none drop-shadow-lg">
-                      {currentTime}
-                    </h2>
+                    {clockStyle === '1' && (
+                      <h2 className="text-[78px] font-extralight text-white/95 tracking-tighter leading-none drop-shadow-lg">
+                        {currentTime}
+                      </h2>
+                    )}
+                    {clockStyle === '2' && (
+                      <h2 className="text-[72px] font-bold text-white tracking-tight leading-none drop-shadow-2xl">
+                        {currentTime}
+                      </h2>
+                    )}
+                    {clockStyle === '3' && (
+                      <div className="flex flex-col items-center">
+                        <h2 className="text-[64px] font-light text-white/95 tracking-tight leading-none">
+                          {currentTime}
+                        </h2>
+                        <span className="text-lg text-white/85 font-medium mt-1">
+                          {new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                        </span>
+                      </div>
+                    )}
+                    {clockStyle === '4' && (
+                      <h2 className="text-[56px] font-medium text-white tracking-normal leading-none">
+                        {currentTime}
+                      </h2>
+                    )}
+                    {clockStyle === '5' && (
+                      <h2 className="text-[68px] font-bold text-[#00ff88] tracking-[4px] leading-none drop-shadow-[0_0_20px_rgba(0,255,136,0.5)] font-mono">
+                        {currentTime}
+                      </h2>
+                    )}
                   </div>
 
                   {/* Header */}
@@ -436,13 +571,13 @@ export default function App() {
                           key={i}
                           initial={{ y: -12, opacity: 0, scale: 0.97 }}
                           animate={{ y: 0, opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.08 }}
+                          transition={{ delay: i * 0.06 }}
                           onClick={() => setSimulatorStep('dash')}
-                          className="bg-white/90 backdrop-blur-3xl rounded-[19px] p-3.5 flex items-center gap-3 shadow-lg border-t border-white/60 cursor-pointer active:scale-[0.98] transition-transform"
+                          className="bg-white/88 backdrop-blur-[50px] rounded-[19px] p-3.5 flex items-center gap-3 shadow-lg border-t border-white/60 cursor-pointer active:scale-[0.98] transition-transform"
                         >
                           <div className="relative shrink-0">
-                            {i === 0 && badge > 0 && (
-                              <div className="absolute -top-1.5 -left-1.5 bg-[#ff3b30] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white/90 min-w-[20px] text-center">
+                            {i === 0 && badge && (
+                              <div className="absolute -top-1.5 -left-1.5 bg-[#ff3b30] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white/90 min-w-[20px] text-center z-10">
                                 {badge}
                               </div>
                             )}
@@ -452,7 +587,7 @@ export default function App() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-[15px] text-black leading-tight">{title}</h4>
-                            <p className="text-[14px] text-gray-700 leading-tight mt-0.5">{message} {value}</p>
+                            <p className="text-[14px] text-gray-700 leading-tight mt-0.5">{message}</p>
                           </div>
                           <span className="text-[13px] text-gray-500 font-medium shrink-0">agora</span>
                         </motion.div>
@@ -461,20 +596,21 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Bottom Actions */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 pb-10 flex justify-around items-center bg-gradient-to-t from-black/90 to-transparent">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <Smartphone className="text-white w-7 h-7" />
-                  </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 flex items-center justify-center">
-                      <div className="text-white font-bold text-2xl">$</div>
-                    </div>
-                    <span className="text-[11px] font-semibold text-white/85">Make money</span>
-                  </div>
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <AppWindow className="text-white w-7 h-7" />
-                  </div>
+                {/* Bottom Actions - iPhone Exact Proportion */}
+                <div className="absolute bottom-0 left-0 right-0 p-7 pb-12 flex justify-between items-end bg-gradient-to-t from-black/90 to-transparent pointer-events-none">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); alert('🔦 Lanterna ativada!'); }}
+                    className="w-[50px] h-[50px] rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center shadow-xl active:scale-95 transition-all pointer-events-auto"
+                  >
+                    <img src="https://i.ibb.co/gFVw8ZRf/af01eaca-a0f9-4799-a742-922c2f1bd4b1-1.png" alt="Flashlight" className="w-7 h-7 object-contain brightness-200" />
+                  </button>
+                  
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); alert('📷 Abrindo câmera...'); }}
+                    className="w-[50px] h-[50px] rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center shadow-xl active:scale-95 transition-all pointer-events-auto"
+                  >
+                    <img src="https://i.ibb.co/Kp2y8VpX/d41e74800b28d7f7598e21fa7faf51bd.png" alt="Camera" className="w-7 h-7 object-contain brightness-200" />
+                  </button>
                 </div>
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/50 rounded-full" />
               </div>
