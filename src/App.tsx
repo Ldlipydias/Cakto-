@@ -17,10 +17,24 @@ export default function App() {
   const [history, setHistory] = useState<NotificationHistory[]>([]);
   const [permission, setPermission] = useState<NotificationPermission>('default');
   const [mode, setMode] = useState<'real' | 'fake'>('fake');
-  const [showFakeOverlay, setShowFakeOverlay] = useState(false);
-  const [overlayValue, setOverlayValue] = useState('');
-  const [overlayTitle, setOverlayTitle] = useState('');
-  const [overlayMessage, setOverlayMessage] = useState('');
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [simulatorStep, setSimulatorStep] = useState<'lock' | 'dash'>('lock');
+  const [appName, setAppName] = useState('Cakto');
+  const [appLogo, setAppLogo] = useState('https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg');
+  const [iconBgColor, setIconBgColor] = useState('#ffffff');
+  const [quantity, setQuantity] = useState(5);
+  const [badge, setBadge] = useState(78);
+  const [currentTime, setCurrentTime] = useState('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0'));
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -84,8 +98,8 @@ export default function App() {
 
     // Trigger Notification based on mode
     if (mode === 'real' && 'Notification' in window) {
-      const spacer = '\u00A0'.repeat(100);
-      // O link do site aparece na primeira linha, então colocamos 100 espaços lá para empurrá-lo
+      const spacer = '\u00A0'.repeat(250);
+      // Aumentamos para 250 espaços para garantir que o link suma em qualquer resolução
       const finalTitle = `\u00A0${spacer}\n\u00A0\n\u00A0\nCakto`;
       // Corpo com Pix gerado e Sua comissão
       const finalBody = `Pix gerado!\nSua comissão: ${value}`;
@@ -116,17 +130,41 @@ export default function App() {
         alert("Por favor, ative as permissões de notificação no topo da tela para receber o alerta real.");
       }
     } else {
-      // Fake Overlay Mode (for perfect screenshots)
-      setOverlayTitle(title || 'Pix gerado!!!');
-      setOverlayMessage(message || 'sua comissão:');
-      setOverlayValue(value);
-      setShowFakeOverlay(true);
-      setTimeout(() => {
-        setShowFakeOverlay(false);
-      }, 4000);
+      // Full Simulator Mode (from user's HTML)
+      setSimulatorStep('lock');
+      setShowSimulator(true);
+      
+      // Request Fullscreen
+      try {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        }
+      } catch (e) {
+        console.log('Fullscreen not supported');
+      }
     }
     
     setValue('');
+  };
+
+  const exitSimulator = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+    setShowSimulator(false);
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setAppLogo(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const clearHistory = () => {
@@ -195,6 +233,62 @@ export default function App() {
           </div>
 
           <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome do App</label>
+                <input
+                  type="text"
+                  value={appName}
+                  onChange={(e) => setAppName(e.target.value)}
+                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Cor Ícone</label>
+                <input
+                  type="color"
+                  value={iconBgColor}
+                  onChange={(e) => setIconBgColor(e.target.value)}
+                  className="w-full h-8 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-200 shrink-0">
+                <img src={appLogo} alt="Logo" className="w-full h-full object-cover" />
+              </div>
+              <label className="flex-1">
+                <span className="block text-xs font-medium text-gray-500 mb-1">Trocar Logo</span>
+                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" id="logo-upload" />
+                <label htmlFor="logo-upload" className="block text-center text-xs bg-gray-100 hover:bg-gray-200 py-2 rounded-lg cursor-pointer font-medium">
+                  Selecionar Arquivo
+                </label>
+              </label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Qtd. Notificações</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(parseInt(e.target.value))}
+                  min="1" max="15"
+                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Badge (Ícone)</label>
+                <input
+                  type="number"
+                  value={badge}
+                  onChange={(e) => setBadge(parseInt(e.target.value))}
+                  className="w-full text-sm border-b border-gray-200 focus:border-emerald-500 bg-transparent py-1 outline-none"
+                />
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Título da Notificação</label>
               <input
@@ -288,48 +382,148 @@ export default function App() {
         </div>
       </main>
 
-      {/* Realistic In-App Notification Overlay (Android 12+ Style) */}
+      {/* Full Screen Simulator Overlay */}
       <AnimatePresence>
-        {showFakeOverlay && (
+        {showSimulator && (
           <motion.div
-            initial={{ y: -150, opacity: 0 }}
-            animate={{ y: 16, opacity: 1 }}
-            exit={{ y: -150, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed top-0 left-0 right-0 z-50 px-2 pointer-events-none flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black overflow-hidden select-none"
           >
-            {/* Android style notification bubble (Dark mode) */}
-            <div className="bg-[#2f302f] text-white shadow-2xl rounded-[28px] p-4 flex flex-col gap-1 w-full max-w-[400px]">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full overflow-hidden bg-[#0f8b5a] flex items-center justify-center">
-                    <img src="https://i.ibb.co/mrn3Ln9Z/channels4-profile-1.jpg" alt="App Icon" className="w-full h-full object-cover" />
+            {/* Lock Screen Step */}
+            {simulatorStep === 'lock' && (
+              <div className="relative h-full w-full">
+                {/* Background */}
+                <div className="absolute inset-0 z-0">
+                  <img 
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80" 
+                    alt="Wallpaper" 
+                    className="w-full h-full object-cover blur-[35px] brightness-[0.6] scale-110" 
+                  />
+                  <div className="absolute inset-0 bg-white/10" />
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 h-full flex flex-col px-4 pt-10 pb-32 overflow-y-auto">
+                  {/* Time */}
+                  <div className="text-center mb-8">
+                    <h2 className="text-[78px] font-extralight text-white/95 tracking-tighter leading-none drop-shadow-lg">
+                      {currentTime}
+                    </h2>
                   </div>
-                  <span className="text-[12px] text-gray-300">Cakto</span>
+
+                  {/* Header */}
+                  <div className="flex justify-between items-center mb-4 px-1">
+                    <h3 className="text-2xl font-bold text-white tracking-tight">Central de Notificações</h3>
+                    <button onClick={exitSimulator} className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white text-2xl">×</button>
+                  </div>
+
+                  {/* App Section */}
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center px-1">
+                      <span className="text-white font-semibold">{appName}</span>
+                      <div className="flex gap-2">
+                        <button className="bg-white/12 text-white/85 px-3 py-1.5 rounded-full text-xs font-medium">Mostrar menos</button>
+                        <button onClick={exitSimulator} className="w-7 h-7 rounded-full bg-white/12 flex items-center justify-center text-white text-lg">×</button>
+                      </div>
+                    </div>
+
+                    {/* Notification Stack */}
+                    <div className="space-y-2.5">
+                      {Array.from({ length: quantity }).map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ y: -12, opacity: 0, scale: 0.97 }}
+                          animate={{ y: 0, opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.08 }}
+                          onClick={() => setSimulatorStep('dash')}
+                          className="bg-white/90 backdrop-blur-3xl rounded-[19px] p-3.5 flex items-center gap-3 shadow-lg border-t border-white/60 cursor-pointer active:scale-[0.98] transition-transform"
+                        >
+                          <div className="relative shrink-0">
+                            {i === 0 && badge > 0 && (
+                              <div className="absolute -top-1.5 -left-1.5 bg-[#ff3b30] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full border-2 border-white/90 min-w-[20px] text-center">
+                                {badge}
+                              </div>
+                            )}
+                            <div className="w-11 h-11 rounded-[11px] overflow-hidden shadow-md" style={{ backgroundColor: iconBgColor }}>
+                              <img src={appLogo} alt="App Icon" className="w-full h-full object-cover" />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-[15px] text-black leading-tight">{title}</h4>
+                            <p className="text-[14px] text-gray-700 leading-tight mt-0.5">{message} {value}</p>
+                          </div>
+                          <span className="text-[13px] text-gray-500 font-medium shrink-0">agora</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[12px] text-gray-400">
-                    {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+
+                {/* Bottom Actions */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 pb-10 flex justify-around items-center bg-gradient-to-t from-black/90 to-transparent">
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <Smartphone className="text-white w-7 h-7" />
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <div className="text-white font-bold text-2xl">$</div>
+                    </div>
+                    <span className="text-[11px] font-semibold text-white/85">Make money</span>
+                  </div>
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <AppWindow className="text-white w-7 h-7" />
+                  </div>
+                </div>
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/50 rounded-full" />
+              </div>
+            )}
+
+            {/* Dashboard Step */}
+            {simulatorStep === 'dash' && (
+              <div className="h-full w-full bg-[#f8f9fa] flex flex-col">
+                <div className="bg-[#10b981] pt-12 pb-8 px-5 rounded-b-[30px] shadow-lg text-white">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2.5">
+                      <img src={appLogo} alt="Logo" className="w-9 h-9 rounded-lg object-cover" />
+                      <span className="font-bold text-lg">{appName}</span>
+                    </div>
+                    <button onClick={exitSimulator} className="bg-white/20 px-3 py-1.5 rounded-lg text-xs font-semibold">Sair</button>
+                  </div>
+                  <p className="text-sm opacity-90 mb-1">Saldo disponível</p>
+                  <h2 className="text-4xl font-extrabold tracking-tight">R$ 12.450,00</h2>
+                </div>
+
+                <div className="flex-1 p-5 space-y-6 overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-4 -mt-12">
+                    <div className="bg-white p-4 rounded-2xl shadow-sm">
+                      <p className="text-xs text-gray-500 mb-1">Vendas hoje</p>
+                      <p className="text-xl font-bold text-gray-800">24</p>
+                    </div>
+                    <div className="bg-white p-4 rounded-2xl shadow-sm">
+                      <p className="text-xs text-gray-500 mb-1">Comissão hoje</p>
+                      <p className="text-xl font-bold text-emerald-500">{value}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-3xl p-5 shadow-sm space-y-4">
+                    <h3 className="font-bold text-lg text-gray-800">Últimas Vendas</h3>
+                    <div className="divide-y divide-gray-100">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="py-4 flex justify-between items-center">
+                          <div>
+                            <h4 className="font-semibold text-gray-800">Venda Aprovada</h4>
+                            <p className="text-xs text-gray-400">Há {i * 5} minutos</p>
+                          </div>
+                          <span className="font-bold text-emerald-500">+ {value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
-              
-              {/* Content */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 pt-1">
-                  <h4 className="font-medium text-[15px] leading-tight text-gray-100">{overlayTitle}</h4>
-                  <p className="text-[14px] text-gray-300 mt-0.5 leading-tight">
-                    {overlayMessage} {overlayValue}
-                  </p>
-                </div>
-                {/* Right side image */}
-                <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-[#0f8b5a] flex items-center justify-center">
-                  <img src="https://i.ibb.co/dhzgGMY/154879-1.png" alt="Right Icon" className="w-full h-full object-cover" />
-                </div>
-              </div>
-            </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
